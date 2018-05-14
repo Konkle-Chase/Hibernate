@@ -5,6 +5,8 @@
  */
 package hibernate_practice;
 
+import Controllers.*;
+import Controllers.Handler;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.EmptyStackException;
@@ -16,43 +18,28 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import Models.Employee;
+import Views.View;
 
 /**
  *
  * @author Konkles
  */
 //This is a simple program which uses the Hibernate ORM API and demonstrates CRUD functionality 
-public class Hibernate {
+public class Hibernate implements Handler{
     public static SessionFactory factory;
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
         try {
             factory = new Configuration().configure().buildSessionFactory();
         } catch (HibernateException ex) { 
             System.err.println("Failed to create sessionFactory object." + ex);
             throw new ExceptionInInitializerError(ex); 
-        }        
-        
-        System.out.println("Adding Employees Example");
-        addEmployee("Axel", "Konkle", "Owner", new Date(118,4,5));
-        addEmployee("Penny","Russell", "Office Manager", new Date(118,4,5));
-        addEmployee("Yoshi", "Benson", "Temp", new Date(118,4,5));
-        addEmployee("Jordy", "Hatch", "Temp", new Date(118,4,5));
-        getEmployees();
-        
-        System.out.println("Update Employees Example");
-        updateEmployee(1, "Axel", "Konkle", "President and Owner", new Date(118,4,1));
-        updateEmployee(2, "Penelope","Russell","Office Manager", new Date(118,4,4));
-        getEmployees();
-        
-        System.out.println("Delete Employees Example");
-        deleteEmployee(3);
-        deleteEmployee(4);
-        getEmployees();
-        
-        factory.close();
+        }  
+        View menu = new View();
+        menu.acView();
     }
     
     //This method adds employees to the database.
@@ -79,16 +66,14 @@ public class Hibernate {
             List employees = session.createQuery("FROM Employee").list();           
             tx.commit();  
            
-            List employeeList = new ArrayList();
+            List emList = new ArrayList();
             for (Iterator iterator = employees.iterator(); iterator.hasNext();){
                     Employee em = (Employee)iterator.next();
-                    employeeList.add(formatEmployee(em));
+                    emList.add(formatEmployee(em));
             }
-            for (Iterator iterator = employeeList.iterator(); iterator.hasNext();){
-                   String record = (String)iterator.next();
-                   System.out.println(record);
-            }
-            System.out.println();
+            View view = new View();
+            EmpController controller = new EmpController(view);
+            controller.updateView(emList);
         } catch (HibernateException e) {
             if (tx!=null) tx.rollback();
         } finally {
@@ -140,5 +125,25 @@ public class Hibernate {
         } finally {
             session.close(); 
         }       
+    }
+    
+    @Override
+    public void engage(){
+        System.out.println("Adding Employees Example");
+        addEmployee("Axel", "Konkle", "Owner", new Date(118,4,5));
+        addEmployee("Penny","Russell", "Office Manager", new Date(118,4,5));
+        addEmployee("Yoshi", "Benson", "Temp", new Date(118,4,5));
+        addEmployee("Jordy", "Hatch", "Temp", new Date(118,4,5));
+        getEmployees();
+        
+        System.out.println("Update Employees Example");
+        updateEmployee(1, "Axel", "Konkle", "President and Owner", new Date(118,4,1));
+        updateEmployee(2, "Penelope","Russell","Office Manager", new Date(118,4,4));
+        getEmployees();
+        
+        System.out.println("Delete Employees Example");
+        deleteEmployee(3);
+        deleteEmployee(4);
+        getEmployees();
     }
 }

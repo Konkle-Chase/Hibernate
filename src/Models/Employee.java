@@ -9,7 +9,6 @@ import java.util.Date;
  */
 public class Employee  implements java.io.Serializable {
 
-
      private Integer idEmployee;
      private String firstName;
      private String lastName;
@@ -61,10 +60,6 @@ public class Employee  implements java.io.Serializable {
     public void setDateHired(Date dateHired) {
         this.dateHired = dateHired;
     }
-
-
-
-
 }
 
 
