@@ -16,8 +16,8 @@
     <property name="jobTitle" type="string">
       <column length="45" name="job_title" not-null="true"/>
     </property>
-    <property name="dateHired" type="date">
-      <column length="10" name="date_hired" not-null="true"/>
+    <property name="salary" type="long">
+      <column length="11" name="salary" not-null="true"/>
     </property>
   </class>
 </hibernate-mapping>

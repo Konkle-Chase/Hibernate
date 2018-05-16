@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hibernate_practice;
+package GlueClasses;
 
 import Controllers.EmpController;
 import Controllers.Handler;
 import Views.View;
-import static hibernate_practice.Hibernate.factory;
+import static GlueClasses.Hibernate.factory;
 
 /**
  *
@@ -21,7 +21,7 @@ public class Exit implements Handler {
         View view = new View();
         EmpController controller = new EmpController(view);
         
-        controller.updateView(exitMessage);
+        controller.updateExitView(exitMessage);
         factory.close();
     }
 }

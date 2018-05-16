@@ -8,6 +8,6 @@
     <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/practice?zeroDateTimeBehavior=convertToNull</property>
     <property name="hibernate.connection.username">root</property>
     <property name="hibernate.connection.password">password</property>
-    <mapping resource="Models/Employee.hbm.xml"/>
+    <mapping resource="GlueClasses/Employee.hbm.xml"/>
   </session-factory>
 </hibernate-configuration>

@@ -7,9 +7,7 @@ package Controllers;
 
 import Models.Employee;
 import Views.View;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 /**
  *
@@ -55,29 +53,26 @@ public class EmpController {
         return em.getJobTitle();
     }
     
-    public void setEmployeeDateHired(Date dateHired){
-        em.setDateHired(dateHired);
+    public void setEmployeeSalary(Long salary){
+        em.setSalary(salary);
     }
-    public Date getEmployeeDateHired(){
-        return em.getDateHired();
+    public Long getEmployeeSalary(){
+        return em.getSalary();
     }
     
     
-    public void updateView(List emList){				        
-        view.printEmployees(emList);
+    public void updateView(List emList, String message){				        
+        view.printEmployees(emList, message);
     }
-//    public void updateView(Object record){
-//        view.printStudentRecord(record);
-//    }
-//    public void updateView(int messageNum){
-//        view.printMessage(messageNum);
-//    }
-    public void updateView(String exitMessage){
+    
+    public void updateView(String message){				        
+        view.printMessage(message);
+    }
+    
+    public void updateExitView(String exitMessage){
         view.printExitMessage(exitMessage);
     }
-//    public void updateView(Set urlSet){
-//        view.printUrlSet(urlSet);
-//    }
+
 }
 
 

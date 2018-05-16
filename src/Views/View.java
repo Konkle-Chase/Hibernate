@@ -24,6 +24,7 @@ public void acView(){
                     + "| Student Records Menu Options           |\n"
                     + "------------------------------------------\n"
                     + "| 1 - Run Hibernate                      |\n"
+                    + "| 2 - Read From and Write To JSON        |\n" 
                     + "| 0 - Exit Application                   |\n" 
                     + "------------------------------------------\n\n"
                     + "Enter menu option: ";
@@ -35,18 +36,23 @@ public void acView(){
             if (key.contains(option)) {                
                 ACP.runOption(option);
             } else {
-                System.out.println("Invalid Entry. Please select the number that corresponds to the desired application function.");
+                System.out.println("Invalid Entry. Please select the number that corresponds to the desired function.");
             }
             
         } 
     }
     
-    public void printEmployees(List emList){        
+    public void printEmployees(List emList, String message){        
+        System.out.println(message);
         for (Iterator iterator = emList.iterator(); iterator.hasNext();){
                String record = (String)iterator.next();
                System.out.println(record);
         }
         System.out.println();
+    }
+    
+    public void printMessage(String message){
+        System.out.println(message + "\n");
     }
     
     public void printExitMessage(String exitMessage){
