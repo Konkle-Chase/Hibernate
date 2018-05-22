@@ -5,7 +5,6 @@
  */
 package GlueClasses;
 
-import Controllers.EmpController;
 import Controllers.Handler;
 import static GlueClasses.Hibernate.factory;
 import Models.Employee;
@@ -14,10 +13,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.json.simple.JSONArray;
@@ -33,7 +32,6 @@ public class JSON extends Hibernate implements Handler{
     @Override
     public void engage(){
         View view = new View();
-        EmpController controller = new EmpController(view);
         String filePath = "/Users/Konkles/Desktop/CIT_360/CIT360/src/GlueClasses/JsonWriteTo.json";
         
         getEmployeesFromJson();
@@ -49,25 +47,26 @@ public class JSON extends Hibernate implements Handler{
             file.flush();
             file.close();
         } catch(IOException ex){
+            Logger.getLogger(Threader.class.getName()).log(Level.SEVERE, null, ex);
         }              
-        controller.updateExitView(message);
     }
     
     //This method seeds the student database by reading a JSONArray from a JSON file.
     public static void getEmployeesFromJson(){
         String filePath = "/Users/Konkles/Desktop/CIT_360/CIT360/src/GlueClasses/JsonReadFrom.json";
         try(FileReader reader = new FileReader(filePath)){           
-            message = "Employees added via JSON file Example";
+            message = "Example of adding employees via a JSON file";
             JSONParser jsonParser = new JSONParser();
             JSONArray jArray = (JSONArray) jsonParser.parse(reader);
             for (Iterator iterator = jArray.iterator(); iterator.hasNext();){
                 JSONObject jObject = (JSONObject)iterator.next();
                 Employee em = new Employee();
-   
+  
                 em.setFirstName((String) jObject.get("first_name"));
                 em.setLastName((String) jObject.get("last_name"));
                 em.setJobTitle((String) jObject.get("job_title"));
                 em.setSalary((Long) jObject.get("salary"));
+                
                 Session session = factory.openSession();
                 Transaction tx = null;
                 tx = session.beginTransaction();
@@ -75,8 +74,12 @@ public class JSON extends Hibernate implements Handler{
                 tx.commit();
             }
             reader.close();
-        } catch (FileNotFoundException|org.json.simple.parser.ParseException ex) {} 
-          catch (IOException|NullPointerException ex){}      
+        } catch (FileNotFoundException|org.json.simple.parser.ParseException ex) {
+            Logger.getLogger(Threader.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+          catch (IOException | NullPointerException ex){
+            Logger.getLogger(Threader.class.getName()).log(Level.SEVERE, null, ex);
+        }      
     }
     
     //This function takes the attributes of a student and puts them into an JSONObject

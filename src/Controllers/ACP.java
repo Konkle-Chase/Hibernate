@@ -5,9 +5,7 @@
  */
 package Controllers;
 
-import GlueClasses.Exit;
-import GlueClasses.Hibernate;
-import GlueClasses.JSON;
+import GlueClasses.*;
 import java.util.HashMap;
 
 /**
@@ -23,6 +21,7 @@ public class ACP {
     public static void buildMenu() {
         options.put("1", new Hibernate());
         options.put("2", new JSON());
+        options.put("3", new Threader());
         options.put("0", new Exit());       
     }
     

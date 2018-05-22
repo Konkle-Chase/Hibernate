@@ -24,7 +24,8 @@ public void acView(){
                     + "| Student Records Menu Options           |\n"
                     + "------------------------------------------\n"
                     + "| 1 - Run Hibernate                      |\n"
-                    + "| 2 - Read From and Write To JSON        |\n" 
+                    + "| 2 - Read From and Write To JSON        |\n"
+                    + "| 3 - Run Threader                       |\n"
                     + "| 0 - Exit Application                   |\n" 
                     + "------------------------------------------\n\n"
                     + "Enter menu option: ";

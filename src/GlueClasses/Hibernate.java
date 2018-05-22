@@ -8,7 +8,6 @@ package GlueClasses;
 import Controllers.*;
 import Controllers.Handler;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.EmptyStackException;
 import java.util.Iterator;
 import java.util.List;
@@ -19,7 +18,8 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import Models.Employee;
 import Views.View;
-import java.math.BigDecimal;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.hibernate.Query;
 
 /**
@@ -29,7 +29,7 @@ import org.hibernate.Query;
 //This is a simple program which uses the Hibernate ORM API and demonstrates CRUD functionality 
 public class Hibernate implements Handler{
     public static SessionFactory factory;
-    String message = "";
+    public String message = "";
     /**
      * @param args the command line arguments
      */
@@ -40,13 +40,17 @@ public class Hibernate implements Handler{
         } catch (HibernateException ex) { 
             System.err.println("Failed to create sessionFactory object." + ex);
             throw new ExceptionInInitializerError(ex); 
-        }  
+        }
+        addEmployee("Axel", "Konkle", "Owner", new Long(200000));
+        addEmployee("Penny","Russell", "Office Manager", new Long(59000));
+        addEmployee("Yoshi", "Benson", "Temp", new Long(30000));
+        addEmployee("Jordy", "Hatch", "Temp", new Long(30000));
         View menu = new View();
         menu.acView();
     }
     
     //This method adds employees to the database.
-    public void addEmployee(String firstName, String lastName, String jobTitle, Long salary){
+    public static void addEmployee(String firstName, String lastName, String jobTitle, Long salary){
         Session session = factory.openSession();
         boolean exists = checkExistence(firstName, lastName, jobTitle);
         try {
@@ -58,15 +62,16 @@ public class Hibernate implements Handler{
             } else{
                 throw new EmptyStackException();
             }
-        } catch (EmptyStackException | HibernateException e) {
+        } catch (EmptyStackException | HibernateException ex) {
             System.out.println("Failed to add Employee.");
+            Logger.getLogger(Threader.class.getName()).log(Level.SEVERE, null, ex);
         } finally{
           session.close();
         }
     }
     
     //This method retrieves a list of all employees from the database.
-    public List getEmployees(String message){
+    public static List getEmployees(String message){
         Session session = factory.openSession();
         Transaction tx = null;
         List emList = new ArrayList();
@@ -82,8 +87,9 @@ public class Hibernate implements Handler{
             EmpController controller = new EmpController(view);
             controller.updateView(emList, message);
             return employees;
-        } catch (HibernateException e) {
+        } catch (HibernateException ex) {
             if (tx!=null) tx.rollback();
+            Logger.getLogger(Threader.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             session.close();
         }      
@@ -91,7 +97,7 @@ public class Hibernate implements Handler{
     }
     
     //This method puts employee information into a user-friendly format.
-    public String formatEmployee(Employee em){
+    public static String formatEmployee(Employee em){
         String record = " Employee ID: " + em.getIdEmployee() 
         + "  First Name: " + em.getFirstName() 
         + "  Last Name: " + em.getLastName()
@@ -101,7 +107,7 @@ public class Hibernate implements Handler{
     }
     
     //This method updates an employee's information that is already stored in the database.
-    public void updateEmployee(Integer idEmployee, String firstName, String lastName, String jobTitle, Long salary){
+    public static void updateEmployee(Integer idEmployee, String firstName, String lastName, String jobTitle, Long salary){
         Session session = factory.openSession();
         Transaction tx = null;
         try{
@@ -113,8 +119,9 @@ public class Hibernate implements Handler{
             em.setSalary(salary);
             session.update(em); 
             tx.commit();
-        } catch(NullPointerException|EmptyStackException|HibernateException e) {
+        } catch(NullPointerException|EmptyStackException|HibernateException ex) {
             if (tx!=null) tx.rollback();
+            Logger.getLogger(Threader.class.getName()).log(Level.SEVERE, null, ex);
         } finally{
             session.close(); 
         }
@@ -129,14 +136,15 @@ public class Hibernate implements Handler{
             Employee em = (Employee)session.get(Employee.class, idEmployee); 
             session.delete(em); 
             tx.commit();
-        } catch (IllegalArgumentException|EmptyStackException|HibernateException e) {
+        } catch (IllegalArgumentException|EmptyStackException|HibernateException ex) {
             if (tx!=null) tx.rollback();
+            Logger.getLogger(Threader.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             session.close(); 
         }       
     }
     
-    public boolean checkExistence(String firstName, String lastName, String jobTitle) {
+    public static boolean checkExistence(String firstName, String lastName, String jobTitle) {
         Session session = factory.openSession();
         Transaction tx = null;
         boolean exists = false;
@@ -145,36 +153,54 @@ public class Hibernate implements Handler{
             Query query = session.createQuery("FROM Employee E WHERE E.firstName = :firstName AND E.lastName = :lastName");
             query.setParameter("firstName",firstName);
             query.setParameter("lastName", lastName);
-//            query.setParameter("jobTitle", jobTitle);
-//            query.setParameter("salary", salary);
             List result = query.list();
             tx.commit();
             if(!result.isEmpty())
                 exists = true;
             return exists;
-        } catch(EmptyStackException | HibernateException e){
+        } catch(EmptyStackException | HibernateException ex){
           if (tx!=null) tx.rollback();
+          Logger.getLogger(Threader.class.getName()).log(Level.SEVERE, null, ex);  
           exists = false;
           return exists;
         } finally {
             session.close();
         }
     }
+    
+    public static Object getEmployeeId(String firstName, String lastName) throws IllegalStateException{
+        Session session = factory.openSession();
+        Transaction tx = null;
+        Object result = null;
+        try{
+            tx = session.beginTransaction();
+            Query query = session.createQuery("SELECT E.idEmployee FROM Employee E WHERE E.firstName = :firstName AND E.lastName = :lastName");
+            query.setParameter("firstName", firstName);
+            query.setParameter("lastName", lastName);
+            result = query.uniqueResult();
+            tx.commit();
+        return result;
+        } catch(IllegalStateException ex){
+            Logger.getLogger(Threader.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
     @Override
     public void engage(){
-        message = "Adding Employees Example";
-        addEmployee("Axel", "Konkle", "Owner", new Long(200000));
-        addEmployee("Penny","Russell", "Office Manager", new Long(59000));
-        addEmployee("Yoshi", "Benson", "Temp", new Long(30000));
-        addEmployee("Jordy", "Hatch", "Temp", new Long(30000));
+        message = "Example of reading employees from the DB";               
         getEmployees(message);
         
-        message = "Updating Employees Example";
+        
+        message = "Example of creating/adding a new employee to the DB";
+        addEmployee("Alfie", "Dobbs", "Temp", new Long(50000));
+        getEmployees(message);
+        
+        message = "Example of updating existing employees in the DB";
         updateEmployee(1, "Axel", "Konkle", "President and Owner", new Long(300000));
         updateEmployee(2, "Penelope","Russell","Office Manager", new Long(60000));
         getEmployees(message);
         
-        message = "Deleting Employees Example";
+        message = "Example of deleting employees from the DB";
         deleteEmployee(3);
         deleteEmployee(4);
         getEmployees(message);
