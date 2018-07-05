@@ -128,7 +128,7 @@ public class Hibernate implements Handler{
     }
     
     //This method deletes employee information from the database.
-    public void deleteEmployee(int idEmployee){       
+    public static void deleteEmployee(int idEmployee){       
         Session session = factory.openSession();
         Transaction tx = null;
         try {

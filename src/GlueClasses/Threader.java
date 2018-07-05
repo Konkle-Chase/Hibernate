@@ -26,21 +26,22 @@ public class Threader extends Hibernate implements Handler {
     @Override
     public void engage(){
         try {
-            runThreads();
+            runTreads();
         } catch (InterruptedException | ExecutionException | TimeoutException ex) {
             Logger.getLogger(Threader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    public void runThreads() throws InterruptedException, ExecutionException, TimeoutException {
+    public void runTreads() throws InterruptedException, ExecutionException, TimeoutException {
         System.out.println("Example of Treading");
         Runnable task1 = () -> {
             try {
                 System.out.println("");
                 Hibernate.addEmployee("Jenni", "Hatch", "Accountant", new Long(150000));
-                System.out.println("Task 1 Completed");
-            } catch (Exception e) {
-                throw new IllegalStateException("2task interrupted",e);
+                Hibernate.getEmployees(message);
+                System.out.println("Task 1 Completed: Added employee");
+            } catch (Exception ex) {
+                throw new IllegalStateException("2task interrupted",ex);
             }
         };
         
@@ -51,20 +52,26 @@ public class Threader extends Hibernate implements Handler {
                 String jobTitle = "CPA";
                 Long salary = new Long(150000);
                 Object idEmployee = getEmployeeId(firstName, lastName);
-    
+                
                 Hibernate.updateEmployee((Integer) idEmployee, firstName, lastName, jobTitle, salary);
-                System.out.println("Task 2 completed");
-            } catch (Exception e) {
-                throw new IllegalStateException("2task interrupted",e);
+                Hibernate.getEmployees(message);
+                System.out.println("Task 2 Completed: Updated employee");
+            } catch (IllegalStateException ex) {
+                throw new IllegalStateException("2task interrupted",ex);
             }
         };
         
         Runnable task3 = () -> {
             try {
-                System.out.println("Task 3 completed");
+                String firstName = "Jenni";
+                String lastName = "Hatch";
+                Object idEmployee = getEmployeeId(firstName, lastName);
+                
+                Hibernate.deleteEmployee((int) idEmployee);
                 Hibernate.getEmployees(message);
-            } catch (Exception e) {
-                throw new IllegalStateException("3task interrupted",e);
+                System.out.println("Task 3 Completed: Deleted employee");
+            } catch (Exception ex) {
+                throw new IllegalStateException("3task interrupted",ex);
             }           
         };
         
@@ -75,16 +82,19 @@ public class Threader extends Hibernate implements Handler {
             TimeUnit.SECONDS.sleep(1);
         }
         Future<?> future2 = executor.submit(task2);
-        while (!future2.isDone()) {
+        while(!future2.isDone()) {
             TimeUnit.SECONDS.sleep(1);
         }
-        executor.submit(task3);
+        Future <?> future3 = executor.submit(task3);
+        while(!future3.isDone()){
+            TimeUnit.SECONDS.sleep(1);
+        }
         executor.shutdown();
         try {
             if (!executor.awaitTermination(5, TimeUnit.SECONDS)) {
                 executor.shutdownNow();
             } 
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ex) {
             executor.shutdownNow();
         }
         
