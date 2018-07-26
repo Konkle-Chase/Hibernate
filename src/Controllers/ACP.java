@@ -22,6 +22,7 @@ public class ACP {
         options.put("1", new Hibernate());
         options.put("2", new JSON());
         options.put("3", new Threader());
+        options.put("4", new HttpURL());
         options.put("0", new Exit());       
     }
     

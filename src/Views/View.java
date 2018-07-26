@@ -26,6 +26,7 @@ public void acView(){
                     + "| 1 - Run Hibernate                      |\n"
                     + "| 2 - Read From and Write To JSON        |\n"
                     + "| 3 - Run Threader                       |\n"
+                    + "| 4 - Run HttpURL                        |\n"
                     + "| 0 - Exit Application                   |\n" 
                     + "------------------------------------------\n\n"
                     + "Enter menu option: ";
@@ -58,5 +59,12 @@ public void acView(){
     
     public void printExitMessage(String exitMessage){
         System.out.println(exitMessage);
+    }
+    
+    public void printUrlSet(Set urlSet){       
+        for (Iterator iterator = urlSet.iterator(); iterator.hasNext();){
+               String record = (String)iterator.next();
+               System.out.println("*" + record);
+        }       
     }
 }

@@ -8,6 +8,7 @@ package Controllers;
 import Models.Employee;
 import Views.View;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -73,6 +74,9 @@ public class EmpController {
         view.printExitMessage(exitMessage);
     }
 
+    public void updateView(Set urlSet){
+        view.printUrlSet(urlSet);
+    }
 }
 
 
